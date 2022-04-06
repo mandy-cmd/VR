@@ -46,16 +46,13 @@ import { controllerMatrix, buttonState, time } from "../render/core/controllerIn
          let target_parent = model.child(0);
          let target = model.child(0).child(0);
          let wall = model.child(1);
-         wall.identity().scale(3, 3, 0.01).move(tx, ty, -tz*40);
+         wall.identity().scale(1, 1, 0.01).move(tx, ty+1, tz*40);
          
 
-         let LM = matrixL.length ? cg.mMultiply(matrixL, cg.mTranslate( -.01,0,0)) : cg.mTranslate(cx-.2,cy,1);
-         let RM = matrixR.length ? cg.mMultiply(matrixR, cg.mTranslate(-.001,0,0)) : cg.mTranslate(cx+.2,cy,1);
-
-      
-
          let hitR = cg.mHitRect(matrixR, target.getMatrix());
-         let hitWall = cg.mHitRect(target.getMatrix(), wall.getMatrix());
+
+         let hitWall = cg.mHitRect(cg.mMultiply(target.getMatrix(), target_parent.getMatrix()), wall.getMatrix());
+         console.log("hit Wall is " + hitWall);
 
          
          if (triggerL) {
@@ -69,6 +66,7 @@ import { controllerMatrix, buttonState, time } from "../render/core/controllerIn
             hitByR = false;
             hitByWall = false;
             startPositionMatrix = null;
+            hitWallPositionMatrix = null;
             
          }
          else if (hitR && startPositionMatrix === null) {
@@ -84,7 +82,7 @@ import { controllerMatrix, buttonState, time } from "../render/core/controllerIn
          if(hitByR) {
             let s = t;
             if (hitWall && hitWallPositionMatrix === null) {
-               
+               hitsound.play();
                hitByWall = true;
                hitWallPositionMatrix = target.getMatrix();
                t = 0;
@@ -97,7 +95,7 @@ import { controllerMatrix, buttonState, time } from "../render/core/controllerIn
                t -= 0.08;
                startingPoint = hitWallPositionMatrix;
             } else {
-               t += 0.08;
+               t += 0.03;
                startingPoint = startPositionMatrix;
             }
             s = t;
